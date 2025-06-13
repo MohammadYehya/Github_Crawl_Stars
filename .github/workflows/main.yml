@@ -1,1 +1,68 @@
+name: GitHub Crawler
 
+on: [push]
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: pass
+          POSTGRES_DB: crawlerdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Wait for Postgres
+      run: |
+        until pg_isready -h localhost -p 5432; do
+          echo "Waiting for postgres..."; sleep 2;
+        done
+
+    - name: Set up DB schema
+      env:
+        PGHOST: localhost
+        PGPORT: 5432
+        PGUSER: user
+        PGPASSWORD: pass
+        PGDATABASE: crawlerdb
+      run: python crawler/Postgres_DB_Setup.py
+
+    - name: Crawl GitHub stars
+      env:
+        PGHOST: localhost
+        PGPORT: 5432
+        PGUSER: user
+        PGPASSWORD: pass
+        PGDATABASE: crawlerdb
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: python crawler/main.py
+
+    - name: Export DB to CSV
+      run: psql -h localhost -U user -d crawlerdb -c "\COPY repositories TO 'repos.csv' CSV HEADER"
+      env:
+        PGPASSWORD: pass
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: repos-data
+        path: repos.csv
