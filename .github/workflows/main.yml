@@ -56,6 +56,11 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: python crawler/main.py
 
+    - name: Count rows in DB
+      run: psql -h localhost -U user -d crawlerdb -c "SELECT COUNT(*) FROM repositories;"
+      env:
+        PGPASSWORD: pass
+    
     - name: Export DB to CSV
       run: psql -h localhost -U user -d crawlerdb -c "\COPY repositories TO 'repos.csv' CSV HEADER"
       env:
