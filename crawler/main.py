@@ -36,22 +36,30 @@ count = 0
 limit = 100000
 
 while count < limit:
-    result = client.run_query(query, {"cursor": cursor})
-    repos = result['data']['search']['nodes']
-    for repo in repos:
-        cur.execute('''
-            INSERT INTO repositories (repo_id, name, stars)
-            VALUES (%s, %s, %s)
-            ON CONFLICT (repo_id) DO UPDATE
-            SET stars = EXCLUDED.stars, last_updated = CURRENT_TIMESTAMP;
-        ''', (repo['id'], repo['nameWithOwner'], repo['stargazerCount']))
-        count += 1
-        if count >= limit:
-            break
-    cursor = result['data']['search']['pageInfo']['endCursor']
-    if not result['data']['search']['pageInfo']['hasNextPage']:
-        break
-    time.sleep(1)  # be nice to the API
+  print(f"Fetching page {page} with cursor: {cursor}")
+  result = client.run_query(query, {"cursor": cursor})
+  repos = result['data']['search']['nodes']
+  print(f"Fetched {len(repos)} repositories")
+
+  for repo in repos:
+      cur.execute('''
+          INSERT INTO repositories (repo_id, name, stars)
+          VALUES (%s, %s, %s)
+          ON CONFLICT (repo_id) DO UPDATE
+          SET stars = EXCLUDED.stars, last_updated = CURRENT_TIMESTAMP;
+      ''', (repo['id'], repo['nameWithOwner'], repo['stargazerCount']))
+      count += 1
+      if count >= limit:
+          break
+  print(f"Total collected so far: {count}")
+  cursor = result['data']['search']['pageInfo']['endCursor']
+  if not result['data']['search']['pageInfo']['hasNextPage']:
+      print("No more pages to fetch.")
+      break
+  page += 1
+  time.sleep(1)  # be nice to the API
+
+print(f"Final total repositories inserted/updated: {count}")
 
 conn.commit()
 cur.close()
