@@ -14,4 +14,4 @@ Your GitHub pipeline should contain the following:
   3. A setup-postgres step that creates any tables and their respective schemas.
   4. A crawl-stars step that uses the GitHub API to obtain a list of 100,000 GitHub repositories and their respective star counts (not necessarily ordered by anything - it can be any subset of repositories).
   5. Any number of steps which dump the contents of your database and uploads the result as an artifact (csv, json, etc. - anything works here)
-  6. The ability to run the CI pipeline in Sofstica’s repo without having admin privileges (just use the single, default GitHub Token provided by the pipeline)
+  6. The ability to run the CI pipeline in any repo without having admin privileges (just use the single, default GitHub Token provided by the pipeline)
