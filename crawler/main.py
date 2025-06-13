@@ -1,4 +1,4 @@
-from crawler.Github_Client import GitHubClient
+from Github_Client import GitHubClient
 import psycopg2
 import os
 import time
