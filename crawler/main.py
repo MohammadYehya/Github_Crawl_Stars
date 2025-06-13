@@ -54,9 +54,9 @@ while count < limit:
           break
   print(f"Total collected so far: {count}")
   cursor = result['data']['search']['pageInfo']['endCursor']
-  if not result['data']['search']['pageInfo']['hasNextPage']:
-      print("No more pages to fetch.")
-      break
+  # if not result['data']['search']['pageInfo']['hasNextPage']:
+  #     print("No more pages to fetch.")
+  #     break
   page += 1
   time.sleep(1)  # be nice to the API
 
