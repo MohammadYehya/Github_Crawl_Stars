@@ -34,6 +34,7 @@ query ($cursor: String) {
 cursor = None
 count = 0
 limit = 100000
+page = 1
 
 while count < limit:
   print(f"Fetching page {page} with cursor: {cursor}")
