@@ -1,7 +1,7 @@
 # **Scenario / Deliverables**
 Using GitHub’s GraphQL API, obtain a table of the number of stars of 100,000 Github repos. Respect all rate limits (see Github docs for info) and consider retry mechanisms.\
 Please store the crawled data in a table in a relational database like Postgres. Use a schema for your data. The schema should be flexible, and updating the data inside the DB should be efficient. Ideally, we want to crawl this data continuously daily to keep up with the activity on GitHub.\
-Write a list of what you would do differently if this were run to collect data on 500 million repositories instead of 100,000.\
+Write a list of what you would do differently if this were run to collect data on 500 million repositories instead of 100,000.
 
 
 How will the schema evolve if you want to gather more metadata in the future, for example, issues, pull requests, commits inside pull requests, comments inside PRs and issues, reviews on a PR, CI checks, etc.? A PR can get 10 comments today and then 20 comments tomorrow. Updating the DB with this new information should be an efficient operation (minimal rows affected)
