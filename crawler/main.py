@@ -57,7 +57,12 @@ while slices and count < limit:
     cursor = None
 
     for _ in range(10):
-        result = client.run_query(query, {"cursor": cursor, "queryStr": slice_q})
+        while True:
+            try:
+              result = client.run_query(query, {"cursor": cursor, "queryStr": slice_q})
+            except:
+              time.sleep(5)
+              break
 
         if 'data' not in result or 'search' not in result['data']:
             break
