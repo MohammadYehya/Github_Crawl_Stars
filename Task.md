@@ -9,7 +9,7 @@ How will the schema evolve if you want to gather more metadata in the future, fo
 We pay particular attention to the duration of crawl-stars, which should have run as quickly as possible.\
 We also pay attention to how you structure your code and general software engineering practices, like using an anti-corruption layer, as much immutability as possible, separation of concerns and following clean architecture principles.\
 Your GitHub pipeline should contain the following:
-  1. A postgres [service container](https://docs.github.com/en/actions/use-cases-and-examples/using-containerized-services/creating-postgresql-service-containers
+  1. A postgres [service container] (https://docs.github.com/en/actions/use-cases-and-examples/using-containerized-services/creating-postgresql-service-containers)
   2. Any number of steps for setup & dependency installs.
   3. A setup-postgres step that creates any tables and their respective schemas.
   4. A crawl-stars step that uses the GitHub API to obtain a list of 100,000 GitHub repositories and their respective star counts (not necessarily ordered by anything - it can be any subset of repositories).
