@@ -15,15 +15,17 @@ cur = conn.cursor()
 
 query = """
 query ($cursor: String) {
-  repositories(first: 100, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC}) {
+  search(query: "stars:>0", type: REPOSITORY, first: 100, after: $cursor) {
     pageInfo {
       endCursor
       hasNextPage
     }
     nodes {
-      id
-      nameWithOwner
-      stargazerCount
+      ... on Repository {
+        id
+        nameWithOwner
+        stargazerCount
+      }
     }
   }
 }
@@ -37,9 +39,14 @@ page = 1
 while count < limit:
     print(f"Page {page}, Cursor: {cursor}")
     result = client.run_query(query, {"cursor": cursor})
-    repos = result['data']['repositories']['nodes']
 
+    if 'data' not in result or 'search' not in result['data']:
+        print("Unexpected response format:", result)
+        break
+
+    repos = result['data']['search']['nodes']
     print(f"Fetched {len(repos)} repositories")
+
     for repo in repos:
         cur.execute('''
             INSERT INTO repositories (repo_id, name, stars)
@@ -52,11 +59,11 @@ while count < limit:
             break
 
     print(f"Total collected: {count}")
-    if not result['data']['repositories']['pageInfo']['hasNextPage']:
+    if not result['data']['search']['pageInfo']['hasNextPage']:
         print("No more pages to fetch.")
         break
 
-    cursor = result['data']['repositories']['pageInfo']['endCursor']
+    cursor = result['data']['search']['pageInfo']['endCursor']
     page += 1
     time.sleep(1)
 
