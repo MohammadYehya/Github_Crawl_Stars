@@ -59,14 +59,13 @@ while slices and count < limit:
     for _ in range(10):
         while True:
             try:
-              result = client.run_query(query, {"cursor": cursor, "queryStr": slice_q})
+                print(f"Requesting slice: {slice_q}, cursor: {cursor}")
+                result = client.run_query(query, {"cursor": cursor, "queryStr": slice_q})
+                break
             except:
               time.sleep(5)
-              break
-
         if 'data' not in result or 'search' not in result['data']:
             break
-
         repos = result['data']['search']['nodes']
         for repo in repos:
             cur.execute('''
@@ -78,10 +77,8 @@ while slices and count < limit:
             count += 1
             if count >= limit:
                 break
-
         if not result['data']['search']['pageInfo']['hasNextPage']:
             break
-
         cursor = result['data']['search']['pageInfo']['endCursor']
         time.sleep(1)
 
