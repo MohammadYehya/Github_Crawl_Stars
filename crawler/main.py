@@ -38,7 +38,14 @@ page = 1
 
 while count < limit:
   print(f"Fetching page {page} with cursor: {cursor}")
-  result = client.run_query(query, {"cursor": cursor})
+  check = True
+  while check:
+    try:
+      result = client.run_query(query, {"cursor": cursor})
+      check = False
+    except:
+      time.sleep(5)
+      check = True
   repos = result['data']['search']['nodes']
   print(f"Fetched {len(repos)} repositories")
 
