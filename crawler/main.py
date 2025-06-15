@@ -86,7 +86,7 @@ slices = [f"stars:{s}..{e}" for s, e in star_ranges]
 # Crawl settings
 count = 0
 limit = 100000
-monsters = 999999
+minstars = 999999
 cursor = None
 
 # Crawl loop
@@ -114,7 +114,7 @@ while count < limit:
             if count >= limit:
                 break
         if not result['data']['search']['pageInfo']['hasNextPage']:
-            monsters = repos[-1]['stargazerCount']
+            minstars = repos[-1]['stargazerCount']
         cursor = result['data']['search']['pageInfo']['endCursor']
         time.sleep(1)
 
