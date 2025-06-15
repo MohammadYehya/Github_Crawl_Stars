@@ -86,17 +86,17 @@ slices = [f"stars:{s}..{e}" for s, e in star_ranges]
 # Crawl settings
 count = 0
 limit = 100000
+monsters = 999999
+cursor = None
 
 # Crawl loop
-while slices and count < limit:
-    slice_q = slices.pop(0)
-    cursor = None
-
-    for _ in range(10):
+while count < limit:
+    qstr = f"stars:<{minstars}"
+    if True:
         while True:
             try:
                 print(f"Requesting slice: {slice_q}, cursor: {cursor}")
-                result = client.run_query(query, {"cursor": cursor, "queryStr": slice_q})
+                result = client.run_query(query, {"cursor": cursor, "queryStr": qstr})
                 break
             except:
               time.sleep(5)
@@ -114,7 +114,7 @@ while slices and count < limit:
             if count >= limit:
                 break
         if not result['data']['search']['pageInfo']['hasNextPage']:
-            break
+            monsters = repos[-1]['stargazerCount']
         cursor = result['data']['search']['pageInfo']['endCursor']
         time.sleep(1)
 
