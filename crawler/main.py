@@ -51,16 +51,28 @@ while count < limit:
     if 'data' not in result or 'search' not in result['data']:
         break
     repos = result['data']['search']['nodes']
-    for repo in repos:
-        cur.execute('''
-            INSERT INTO repositories (repo_id, name, stars)
-            VALUES (%s, %s, %s)
-            ON CONFLICT (repo_id) DO UPDATE
-            SET stars = EXCLUDED.stars, last_updated = CURRENT_TIMESTAMP;
-        ''', (repo['id'], repo['nameWithOwner'], repo['stargazerCount']))
-        count += 1
-        if count >= limit:
-            break
+    # for repo in repos:
+    #     cur.execute('''
+    #         INSERT INTO repositories (repo_id, name, stars)
+    #         VALUES (%s, %s, %s)
+    #         ON CONFLICT (repo_id) DO UPDATE
+    #         SET stars = EXCLUDED.stars, last_updated = CURRENT_TIMESTAMP;
+    #     ''', (repo['id'], repo['nameWithOwner'], repo['stargazerCount']))
+    #     count += 1
+    #     if count >= limit:
+    #         break
+    data = [(repo['id'], repo['nameWithOwner'], repo['stargazerCount']) for repo in repos]
+    if len(data) + count > limit:
+      data = data[:(limit-len(data)-count-1)]
+    cur.executemany('''
+              INSERT INTO repositories (repo_id, name, stars)
+              VALUES (%s, %s, %s)
+              ON CONFLICT (repo_id) DO UPDATE
+              SET stars = EXCLUDED.stars, last_updated = CURRENT_TIMESTAMP;
+          ''', )
+    count += len(data)
+    if count >= limit:
+      break
     if not result['data']['search']['pageInfo']['hasNextPage']:
       minstars = tempminstars
       cursor = None
