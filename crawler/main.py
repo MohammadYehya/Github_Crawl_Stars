@@ -12,6 +12,7 @@ conn = psycopg2.connect(
     password=os.getenv('PGPASSWORD')
 )
 cur = conn.cursor()
+print('Github Client Connected!')
 
 query = """
 query ($cursor: String, $queryStr: String!) {
@@ -91,6 +92,7 @@ tempminstars = minstars
 cursor = None
 
 # Crawl loop
+print("Starting Crawl")
 while count < limit:
     qstr = f"stars:<{minstars}"
     while True:
