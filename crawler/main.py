@@ -69,7 +69,7 @@ while count < limit:
               VALUES (%s, %s, %s)
               ON CONFLICT (repo_id) DO UPDATE
               SET stars = EXCLUDED.stars, last_updated = CURRENT_TIMESTAMP;
-          ''', )
+          ''', data)
     count += len(data)
     if count >= limit:
       break
