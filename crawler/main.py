@@ -87,36 +87,40 @@ slices = [f"stars:{s}..{e}" for s, e in star_ranges]
 count = 0
 limit = 100000
 minstars = 999999
+tempminstars = minstars
 cursor = None
 
 # Crawl loop
 while count < limit:
     qstr = f"stars:<{minstars}"
-    if True:
-        while True:
-            try:
-                print(f"Requesting slice: {slice_q}, cursor: {cursor}")
-                result = client.run_query(query, {"cursor": cursor, "queryStr": qstr})
-                break
-            except:
-              time.sleep(5)
-        if 'data' not in result or 'search' not in result['data']:
+    while True:
+        try:
+            print(f"Min Stars: {minstars}, cursor: {cursor}")
+            result = client.run_query(query, {"cursor": cursor, "queryStr": qstr})
             break
-        repos = result['data']['search']['nodes']
-        for repo in repos:
-            cur.execute('''
-                INSERT INTO repositories (repo_id, name, stars)
-                VALUES (%s, %s, %s)
-                ON CONFLICT (repo_id) DO UPDATE
-                SET stars = EXCLUDED.stars, last_updated = CURRENT_TIMESTAMP;
-            ''', (repo['id'], repo['nameWithOwner'], repo['stargazerCount']))
-            count += 1
-            if count >= limit:
-                break
-        if not result['data']['search']['pageInfo']['hasNextPage']:
-            minstars = repos[-1]['stargazerCount']
-        cursor = result['data']['search']['pageInfo']['endCursor']
-        time.sleep(1)
+        except:
+          time.sleep(5)
+    if 'data' not in result or 'search' not in result['data']:
+        break
+    repos = result['data']['search']['nodes']
+    for repo in repos:
+        cur.execute('''
+            INSERT INTO repositories (repo_id, name, stars)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (repo_id) DO UPDATE
+            SET stars = EXCLUDED.stars, last_updated = CURRENT_TIMESTAMP;
+        ''', (repo['id'], repo['nameWithOwner'], repo['stargazerCount']))
+        count += 1
+        if count >= limit:
+            break
+    if not result['data']['search']['pageInfo']['hasNextPage']:
+      minstars = tempminstars
+      cursor = None
+    else:
+      tempminstars = repos[-1]['stargazerCount']
+      cursor = result['data']['search']['pageInfo']['endCursor']
+        
+    time.sleep(1)
 
 conn.commit()
 cur.close()
