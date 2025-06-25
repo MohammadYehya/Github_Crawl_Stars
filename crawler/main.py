@@ -55,7 +55,7 @@ while count < limit:
   repos = result['data']['search']['nodes']
   data = [(repo['id'], repo['nameWithOwner'], repo['stargazerCount']) for repo in repos]
   if len(data) + count > limit:
-    data = data[:(limit-len(data)-count-1)]
+    data = data[:(limit-count-1)]
   cur.executemany('''
             INSERT INTO repositories (repo_id, name, stars)
             VALUES (%s, %s, %s)
