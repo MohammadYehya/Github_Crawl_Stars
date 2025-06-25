@@ -56,6 +56,7 @@ while count < limit:
   data = [(repo['id'], repo['nameWithOwner'], repo['stargazerCount']) for repo in repos]
   if len(data) + count > limit:
     data = data[:(limit-count-1)]
+  print(f"Data Length: {len(data)}")
   cur.executemany('''
             INSERT INTO repositories (repo_id, name, stars)
             VALUES (%s, %s, %s)
