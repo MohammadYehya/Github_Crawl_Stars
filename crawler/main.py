@@ -15,7 +15,7 @@ cur = conn.cursor()
 
 query = """
 query ($cursor: String, $queryStr: String!) {
-  search(query: $queryStr, type: REPOSITORY, first: 100, after: $cursor) {
+  search(query: $queryStr, type: REPOSITORY, first: 1000, after: $cursor) {
     pageInfo {
       endCursor
       hasNextPage
