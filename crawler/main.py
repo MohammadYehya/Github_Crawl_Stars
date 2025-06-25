@@ -33,7 +33,7 @@ query ($cursor: String, $queryStr: String!) {
 
 # Crawl settings
 count = 0
-limit = 10000
+limit = 2000
 minstars = 999999
 tempminstars = minstars
 cursor = None
@@ -64,7 +64,8 @@ while count < limit:
             SET stars = EXCLUDED.stars, last_updated = CURRENT_TIMESTAMP;
         ''', data)
   print(f"Inserted in {round(time.time()-itime, 2)}s")
-  count += len(data)
+  cur.execute("SELECT COUNT(*) FROM repositories;")
+  count = cur.fetchone()[0]
   if count >= limit:
     break
   if not result['data']['search']['pageInfo']['hasNextPage']:
