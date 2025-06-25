@@ -33,7 +33,7 @@ query ($cursor: String, $queryStr: String!) {
 
 # Crawl settings
 count = 0
-limit = 100000
+limit = 10000
 minstars = 999999
 tempminstars = minstars
 cursor = None
