@@ -15,7 +15,7 @@ cur = conn.cursor()
 
 query = """
 query ($cursor: String, $queryStr: String!) {
-  search(query: $queryStr, type: REPOSITORY, first: 101, after: $cursor) {
+  search(query: $queryStr, type: REPOSITORY, first: 100, after: $cursor) {
     pageInfo {
       endCursor
       hasNextPage
@@ -33,7 +33,7 @@ query ($cursor: String, $queryStr: String!) {
 
 # Crawl settings
 count = 0
-limit = 2000
+limit = 2007
 minstars = 999999
 tempminstars = minstars
 cursor = None
@@ -56,14 +56,12 @@ while count < limit:
   data = [(repo['id'], repo['nameWithOwner'], repo['stargazerCount']) for repo in repos]
   if len(data) + count > limit:
     data = data[:(limit-len(data)-count-1)]
-  # itime = time.time()
   cur.executemany('''
             INSERT INTO repositories (repo_id, name, stars)
             VALUES (%s, %s, %s)
             ON CONFLICT (repo_id) DO UPDATE
             SET stars = EXCLUDED.stars, last_updated = CURRENT_TIMESTAMP;
         ''', data)
-  # print(f"Inserted in {round(time.time()-itime, 2)}s")
   cur.execute("SELECT COUNT(*) FROM repositories;")
   count = cur.fetchone()[0]
   print(f"Count: {count}")
