@@ -15,7 +15,6 @@ CREATE TABLE IF NOT EXISTS repositories (
     repo_id TEXT UNIQUE,
     name TEXT,
     stars INTEGER,
-    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ''')
 
