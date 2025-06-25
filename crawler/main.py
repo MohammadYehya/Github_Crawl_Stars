@@ -61,7 +61,7 @@ while count < limit:
             INSERT INTO repositories (repo_id, name, stars)
             VALUES (%s, %s, %s)
             ON CONFLICT (repo_id) DO UPDATE
-            SET stars = EXCLUDED.stars;
+            SET stars = EXCLUDED.stars, last_updated = CURRENT_TIMESTAMP;
         ''', data)
   print(f"Inserted in {round(time.time()-itime, 2)}s")
   count += len(data)
