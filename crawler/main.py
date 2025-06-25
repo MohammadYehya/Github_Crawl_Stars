@@ -56,16 +56,17 @@ while count < limit:
   data = [(repo['id'], repo['nameWithOwner'], repo['stargazerCount']) for repo in repos]
   if len(data) + count > limit:
     data = data[:(limit-len(data)-count-1)]
-  itime = time.time()
+  # itime = time.time()
   cur.executemany('''
             INSERT INTO repositories (repo_id, name, stars)
             VALUES (%s, %s, %s)
             ON CONFLICT (repo_id) DO UPDATE
             SET stars = EXCLUDED.stars, last_updated = CURRENT_TIMESTAMP;
         ''', data)
-  print(f"Inserted in {round(time.time()-itime, 2)}s")
+  # print(f"Inserted in {round(time.time()-itime, 2)}s")
   cur.execute("SELECT COUNT(*) FROM repositories;")
   count = cur.fetchone()[0]
+  print(f"Count: {count}")
   if count >= limit:
     break
   if not result['data']['search']['pageInfo']['hasNextPage']:
