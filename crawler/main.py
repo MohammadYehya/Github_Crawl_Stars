@@ -33,7 +33,7 @@ query ($cursor: String, $queryStr: String!) {
 
 # Crawl settings
 count = 0
-limit = 2007
+limit = 100000
 minstars = 999999
 tempminstars = minstars
 cursor = None
@@ -41,6 +41,7 @@ cursor = None
 # Crawl loop
 while count < limit:
   qstr = f"stars:<{minstars}"
+  print("---")
   while True:
     try:
       qtime = time.time()
@@ -49,7 +50,7 @@ while count < limit:
       break
     except:
       time.sleep(0.75)
-  print(f"Min Stars: {tempminstars}")
+  print(f"Temp Min Stars: {tempminstars} - Min Stas: {minstars}")
   if 'data' not in result or 'search' not in result['data']:
     break
   repos = result['data']['search']['nodes']
